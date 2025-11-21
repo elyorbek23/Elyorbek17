@@ -1,0 +1,293 @@
+<!doctype html>
+<html lang="uz">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Topshiriqlar 1-20 — hisoblash</title>
+  <style>
+    body { font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial; padding:18px; background:#f3f4f6; color:#0f172a; }
+    .card { max-width:900px; margin:16px auto; background:#fff; padding:18px; border-radius:10px; box-shadow:0 6px 24px rgba(2,6,23,0.08); }
+    h1{ margin:0 0 14px; font-size:20px; }
+    ol li{ margin:10px 0; }
+    .out { background:#eef2ff; padding:8px 10px; border-radius:8px; display:inline-block; margin-top:6px; }
+    .warn { color:#b91c1c; font-weight:700; }
+    .note { color:#4b5563; font-size:13px; }
+    pre{ background:#0b1220; color:#dbeafe; padding:12px; border-radius:8px; overflow:auto; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>Topshiriqlar 1–20: hisoblash (prompt orqali kiriting)</h1>
+    <div class="note">Har bir topshiriq uchun kerakli qiymatlarni kiriting. Bekor qilish uchun <i>Cancel</i> tugmasini bosing — natija “kiritilmadi” deb ko‘rinadi.</div>
+    <ol id="results"></ol>
+    <hr />
+    <div class="note">Natijalar konsolga ham yoziladi (F12 → Console).</div>
+  </div>
+
+<script>
+(function(){
+  const results = document.getElementById('results');
+  function append(n, text, warn=false){
+    const li = document.createElement('li');
+    li.innerHTML = `<strong>${n}.</strong> ${text}`;
+    if(warn) li.querySelector('strong').className='warn';
+    results.appendChild(li);
+    console.log(`${n}. ${text}`);
+  }
+  function askNumber(promptText){
+    const v = prompt(promptText);
+    if (v === null) return null;
+    const num = Number(v);
+    return Number.isFinite(num) ? num : NaN;
+  }
+
+  // 1.
+  // Do’kondan n kg nok, s kg sabzi, b kg bodring sotib olib umumiy narhni konsolga chiqaring
+  // Foydalanuvchi: n_kg_nok, narh_per_kg_nok, s_kg_sabzi, narh_per_kg_sabzi, b_kg_bodring, narh_per_kg_bodring
+  (function(){
+    const n = askNumber("1) Nok - necha kg? (n):");
+    const narh_nok = askNumber("1) Nok narxi (so'm / 1 kg):");
+    const s = askNumber("1) Sabzi - necha kg? (s):");
+    const narh_sabzi = askNumber("1) Sabzi narxi (so'm / 1 kg):");
+    const b = askNumber("1) Bodring - necha kg? (b):");
+    const narh_bodring = askNumber("1) Bodring narxi (so'm / 1 kg):");
+
+    if (n==null || narh_nok==null || s==null || narh_sabzi==null || b==null || narh_bodring==null){
+      append(1, "Kiritish bekor qilindi yoki yetarli ma'lumot yo'q.");
+      return;
+    }
+    if (isNaN(n) || isNaN(narh_nok) || isNaN(s) || isNaN(narh_sabzi) || isNaN(b) || isNaN(narh_bodring)){
+      append(1, "Xato: raqam kiritilmadi.");
+      return;
+    }
+    const umumiy = n*narh_nok + s*narh_sabzi + b*narh_bodring;
+    append(1, `Umumiy narx: ${umumiy} so'm. (n=${n}kg nok, s=${s}kg sabzi, b=${b}kg bodring)`);
+  })();
+
+  // 2. A va B sonlar berilgan ularning o’rtacha qiymatini hisoblang. (arifmetik mean)
+  (function(){
+    const a = askNumber("2) A soni:");
+    const b = askNumber("2) B soni:");
+    if (a==null || b==null){ append(2, "Kiritish bekor qilindi."); return; }
+    if (isNaN(a) || isNaN(b)){ append(2, "Xato: raqam kiritilmadi."); return; }
+    const avg = (a + b) / 2;
+    append(2, `A va B arifmetik o'rtacha: (${a} + ${b})/2 = ${avg}`);
+  })();
+
+  // 3. A va B sonlar berilgan ularning o’rta geometric qiymatini hisoblang
+  (function(){
+    const a = askNumber("3) (Geometrik) A soni:");
+    const b = askNumber("3) (Geometrik) B soni:");
+    if (a==null || b==null){ append(3, "Kiritish bekor qilindi."); return; }
+    if (isNaN(a) || isNaN(b)){ append(3, "Xato: raqam kiritilmadi."); return; }
+    if (a < 0 || b < 0){
+      append(3, `Eslatma: geometrik o'rtacha odatda musbat sonlar uchun. Siz kiritdingiz: A=${a}, B=${b}. Natija hisoblanmaydi.`);
+      return;
+    }
+    const gmean = Math.sqrt(a * b);
+    append(3, `Geometrik o'rtacha: sqrt(${a}*${b}) = ${gmean}`);
+  })();
+
+  // 4. Kvadrat tomoni berilgan. Uning perimetri P = x*4
+  (function(){
+    const x = askNumber("4) Kvadrat tomoni (x):");
+    if (x==null){ append(4, "Kiritish bekor qilindi."); return; }
+    if (isNaN(x)){ append(4, "Xato: raqam kiritilmadi."); return; }
+    const P = 4 * x;
+    append(4, `Kvadrat perimetri: P = 4*${x} = ${P}`);
+  })();
+
+  // 5. Kvadratning tomoni berilgan uning yuzasi topilsin.
+  (function(){
+    const x = askNumber("5) Kvadrat tomoni (x) — yuzani hisoblash:");
+    if (x==null){ append(5, "Kiritish bekor qilindi."); return; }
+    if (isNaN(x)){ append(5, "Xato: raqam kiritilmadi."); return; }
+    const area = x * x;
+    append(5, `Kvadrat yuzasi: S = ${x}^2 = ${area}`);
+  })();
+
+  // 6. To’g’rito’rtburchakning tomonlari A va B berilgan. Uning yuzasi S = a*b va perimetri P=2*(a+b)
+  (function(){
+    const a = askNumber("6) To'g'rito'rtburchak — tomon A:");
+    const b = askNumber("6) To'g'rito'rtburchak — tomon B:");
+    if (a==null || b==null){ append(6, "Kiritish bekor qilindi."); return; }
+    if (isNaN(a) || isNaN(b)){ append(6, "Xato: raqam kiritilmadi."); return; }
+    const S = a * b;
+    const P = 2 * (a + b);
+    append(6, `Yuzi S=${a}*${b}=${S}; Perimetri P=2*(${a}+${b})=${P}`);
+  })();
+
+  // 7. Diametr D berilgan. Uning uzunligi ni hisoblang. Pi ni 3.14 hisoblang
+  // "uzunligi" => aylananing uzunligi L = pi * D
+  (function(){
+    const D = askNumber("7) Aylana diametri D:");
+    if (D==null){ append(7, "Kiritish bekor qilindi."); return; }
+    if (isNaN(D)){ append(7, "Xato: raqam kiritilmadi."); return; }
+    const pi = 3.14;
+    const L = pi * D;
+    append(7, `Aylana uzunligi L = pi*D = ${pi}*${D} = ${L}`);
+  })();
+
+  // 8. Kub tomon a berilgan. Kubning hajmi topilsin va uning maydoni topilsin
+  (function(){
+    const a = askNumber("8) Kub tomoni a:");
+    if (a==null){ append(8, "Kiritish bekor qilindi."); return; }
+    if (isNaN(a)){ append(8, "Xato: raqam kiritilmadi."); return; }
+    const volume = Math.pow(a,3);
+    const surface = 6 * a * a;
+    append(8, `Kub hajmi V = a^3 = ${a}^3 = ${volume}; Maydoni S = 6*a^2 = ${surface}`);
+  })();
+
+  // 9. Parallipipedning tomonlari a,b,c berilgan. Uning hajmini va yuzasini topilsin
+  (function(){
+    const a = askNumber("9) Parallipiped — a:");
+    const b = askNumber("9) Parallipiped — b:");
+    const c = askNumber("9) Parallipiped — c:");
+    if (a==null || b==null || c==null){ append(9, "Kiritish bekor qilindi."); return; }
+    if (isNaN(a) || isNaN(b) || isNaN(c)){ append(9, "Xato: raqam kiritilmadi."); return; }
+    const V = a * b * c;
+    const surface = 2*(a*b + b*c + c*a);
+    append(9, `Hajmi V=${a}*${b}*${c}=${V}; Yuzasi S=2*(ab+bc+ca)=${surface}`);
+  })();
+
+  // 10. Aylananing radiusi R berilgan. Uning uzunligi va yuzasini hisoblang
+  (function(){
+    const R = askNumber("10) Aylana radiusi R:");
+    if (R==null){ append(10, "Kiritish bekor qilindi."); return; }
+    if (isNaN(R)){ append(10, "Xato: raqam kiritilmadi."); return; }
+    const pi = 3.14; // agar xohlasangiz Math.PI qo'yish mumkin, lekin so'rovda 3.14 ishlating
+    const L = 2 * pi * R;
+    const S = pi * R * R;
+    append(10, `Aylana: uzunligi L=2*pi*R=${L}; Yuzi S=pi*R^2=${S}`);
+  })();
+
+  // 11. A va B qiymat berilgan. O’rta arifmetikini toping
+  (function(){
+    const a = askNumber("11) A:");
+    const b = askNumber("11) B:");
+    if (a==null || b==null){ append(11, "Kiritish bekor qilindi."); return; }
+    if (isNaN(a) || isNaN(b)){ append(11, "Xato: raqam kiritilmadi."); return; }
+    const avg = (a + b) / 2;
+    append(11, `O'rta arifmetik: (${a}+${b})/2 = ${avg}`);
+  })();
+
+  // 12. A va B berilgan. Ularning o’rta geometriyasini toping.
+  (function(){
+    const a = askNumber("12) Geometrik: A:");
+    const b = askNumber("12) Geometrik: B:");
+    if (a==null || b==null){ append(12, "Kiritish bekor qilindi."); return; }
+    if (isNaN(a) || isNaN(b)){ append(12, "Xato: raqam kiritilmadi."); return; }
+    if (a < 0 || b < 0){
+      append(12, "Eslatma: geometrik o'rtacha odatda musbat sonlar uchun.");
+      return;
+    }
+    const g = Math.sqrt(a*b);
+    append(12, `Geometrik o'rtacha: sqrt(${a}*${b}) = ${g}`);
+  })();
+
+  // 13. A va B berilgan. Ularning yig’indisi, ayirmasi, ko’paytmasi va o’zaro qoldiqi topilsin
+  (function(){
+    const a = askNumber("13) A:");
+    const b = askNumber("13) B:");
+    if (a==null || b==null){ append(13, "Kiritish bekor qilindi."); return; }
+    if (isNaN(a) || isNaN(b)){ append(13, "Xato: raqam kiritilmadi."); return; }
+    const yig = a + b;
+    const ayir = a - b;
+    const kop = a * b;
+    let qoldiq;
+    if (b === 0) qoldiq = "Xato: 0 ga bo'linmaydi";
+    else qoldiq = a % b;
+    append(13, `yig'indi=${yig}; ayirma=${ayir}; ko'paytma=${kop}; qoldiq=${qoldiq}`);
+  })();
+
+  // 14. Uchburchakning a va b tomoni berilgan. Uchburchakning 3-tomoni c ni toping va perimetrini hisoblang
+  // (faraz: o'ng burchakli uchburchak, c - gipotenuza)
+  (function(){
+    const a = askNumber("14) Uchburchak (o'ngburchakli) — katet a:");
+    const b = askNumber("14) Uchburchak (o'ngburchakli) — katet b:");
+    if (a==null || b==null){ append(14, "Kiritish bekor qilindi."); return; }
+    if (isNaN(a) || isNaN(b)){ append(14, "Xato: raqam kiritilmadi."); return; }
+    const c = Math.sqrt(a*a + b*b);
+    const P = a + b + c;
+    append(14, `(Faraz: o'ngburchakli) c = sqrt(a^2+b^2) = ${c.toFixed(6)}; Perimetr P = ${P.toFixed(6)}`);
+  })();
+
+  // 15. Aylaning yuzi S berilgan. Diametri D va uzunligi L topilsin.
+  // S = pi * R^2 => R = sqrt(S/pi), D = 2R, L = 2*pi*R. (pi=3.14)
+  (function(){
+    const S = askNumber("15) Aylananing yuzi S:");
+    if (S==null){ append(15, "Kiritish bekor qilindi."); return; }
+    if (isNaN(S) || S < 0){ append(15, "Xato: noto'g'ri S."); return; }
+    const pi = 3.14;
+    const R = Math.sqrt(S / pi);
+    const D = 2 * R;
+    const L = 2 * pi * R;
+    append(15, `R = sqrt(S/pi) = ${R.toFixed(6)}; D = ${D.toFixed(6)}; L = ${L.toFixed(6)}`);
+  })();
+
+  // 16. X va Y nuqtalar berilgan. Ularning orasidagi masofa topilsin. | X – Y |
+  (function(){
+    const X = askNumber("16) Nuqta X (son):");
+    const Y = askNumber("16) Nuqta Y (son):");
+    if (X==null || Y==null){ append(16, "Kiritish bekor qilindi."); return; }
+    if (isNaN(X) || isNaN(Y)){ append(16, "Xato: raqam kiritilmadi."); return; }
+    const dist = Math.abs(X - Y);
+    append(16, `Masofa |${X} - ${Y}| = ${dist}`);
+  })();
+
+  // 17. A va B lar berilgan bo’lib, ularning qiymatlari almashtirilib yangi A va B chop etilsin
+  (function(){
+    let A = askNumber("17) A qiymati:");
+    let B = askNumber("17) B qiymati:");
+    if (A==null || B==null){ append(17, "Kiritish bekor qilindi."); return; }
+    if (isNaN(A) || isNaN(B)){ append(17, "Xato: raqam kiritilmadi."); return; }
+    // swap
+    const oldA = A, oldB = B;
+    [A, B] = [B, A];
+    append(17, `Almashtirilgan: yangi A=${A} (old A=${oldA}), yangi B=${B} (old B=${oldB})`);
+  })();
+
+  // 18. A, B, C berilgan. A bilan B, B bilan C, C bilan A ning qiymatlarini almashtirib, yangi qiymatdagi o’zgaruvchilarni chop eting
+  // Talabga mos ravishda: A<-B, B<-C, C<-A (rotatsiya)
+  (function(){
+    let A = askNumber("18) A:");
+    let B = askNumber("18) B:");
+    let C = askNumber("18) C:");
+    if (A==null || B==null || C==null){ append(18, "Kiritish bekor qilindi."); return; }
+    if (isNaN(A) || isNaN(B) || isNaN(C)){ append(18, "Xato: raqam kiritilmadi."); return; }
+    const old = {A, B, C};
+    // rotate: A<-B, B<-C, C<-A
+    const newA = B, newB = C, newC = A;
+    append(18, `Old: A=${old.A}, B=${old.B}, C=${old.C}; New: A=${newA}, B=${newB}, C=${newC}`);
+  })();
+
+  // 19. F farangeyt temperatura qiymat berilgan bo’lib, Selsiy S ni hisoblang.
+  // S = (F - 32) * 5/9
+  (function(){
+    const F = askNumber("19) Farengayt F:");
+    if (F==null){ append(19, "Kiritish bekor qilindi."); return; }
+    if (isNaN(F)){ append(19, "Xato: raqam kiritilmadi."); return; }
+    const C = (F - 32) * 5/9;
+    append(19, `Selsiy: S = (F - 32)*5/9 = ${(C).toFixed(6)} °C`);
+  })();
+
+  // 20. X kg konfet A so’m bo’lsa, 1 kg va Y kg konfet qancha turadi?
+  // Agar X kg narxi A so'm bo'lsa, 1kg = A/X, Ykg = (A/X)*Y
+  (function(){
+    const X = askNumber("20) Sizda X kg konfet, to'liq narxi A so'm. X qiymati (kg):");
+    const A = askNumber("20) X kg konfet jami A so'm:");
+    const Y = askNumber("20) Siz bilmoqchi bo'lgan Y kg:");
+    if (X==null || A==null || Y==null){ append(20, "Kiritish bekor qilindi."); return; }
+    if (isNaN(X) || isNaN(A) || isNaN(Y)){ append(20, "Xato: raqam kiritilmadi."); return; }
+    if (X === 0){ append(20, "X = 0 bo'lsa narhini hisoblab bo'lmaydi."); return; }
+    const per1 = A / X;
+    const Ycost = per1 * Y;
+    append(20, `1 kg = ${per1} so'm; ${Y} kg = ${Ycost} so'm (agar ${X}kg = ${A} so'm)`);
+  })();
+
+  append("Tugadi", "Barcha hisoblashlar bajarildi. Agar biror topshiriqni maxsus formatda (masalan, faqat konsolga yoki faylga saqlash) xohlasangiz, ayting — darhol o'zgartirib beraman.");
+
+})();
+</script>
+</body>
+</html>
